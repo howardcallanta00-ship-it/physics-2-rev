@@ -1,7 +1,7 @@
 import './style.css';
 import { h, icon } from './lib/dom.js';
 import { store, theme, setTheme } from './lib/store.js';
-import { LABS } from './labs/index.js';
+import { LABS, MODULES } from './labs/index.js';
 import { homeView } from './views/home.js';
 import { labView } from './views/lab.js';
 import { cardsView } from './views/cards.js';
@@ -32,7 +32,9 @@ function paintNav(r) {
   const cur = (p) => (p === r.path ? 'page' : null);
   sideNav.replaceChildren(brand(),
     ...NAV.slice(0, 1).map(([p, ic, t]) => h('a', { class: 'navlink', href: '#' + p, 'aria-current': cur(p) }, icon(ic, 20), t)),
-    h('div', { class: 'side-label' }, 'Lessons'),
+    h('div', { class: 'side-label' }, 'Modules'),
+    ...MODULES.map((l) => h('a', { class: 'sublab', href: `#/labs/${l.id}`, 'aria-current': r.a === 'labs' && r.b === l.id ? 'page' : null }, h('span', { class: 'code' }, l.code), l.title, h('span', { class: 'dot' + (store.get().lessonDone[l.id] ? ' done' : '') }))),
+    h('div', { class: 'side-label' }, 'Labs'),
     ...LABS.map((l) => h('a', { class: 'sublab', href: `#/labs/${l.id}`, 'aria-current': r.a === 'labs' && r.b === l.id ? 'page' : null }, h('span', { class: 'code' }, l.code), l.title, h('span', { class: 'dot' + (store.get().lessonDone[l.id] ? ' done' : '') }))),
     h('div', { class: 'side-label' }, 'Study'),
     ...NAV.slice(1).map(([p, ic, t]) => h('a', { class: 'navlink', href: '#' + p, 'aria-current': cur(p) }, icon(ic, 20), t)),

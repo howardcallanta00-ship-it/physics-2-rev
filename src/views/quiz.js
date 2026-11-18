@@ -1,6 +1,6 @@
 import { h, R, icon, shuffle } from '../lib/dom.js';
 import { store } from '../lib/store.js';
-import { LABS, labById, ALL_QUESTIONS } from '../labs/index.js';
+import { UNITS as LABS, labById, ALL_QUESTIONS } from '../labs/index.js';
 import { pageHead, optionList, feedback } from './common.js';
 
 export function quizView(arg, ctx) {

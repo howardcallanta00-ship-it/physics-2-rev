@@ -1,6 +1,6 @@
 import { h, R, M, icon, shuffle } from '../lib/dom.js';
 import { store } from '../lib/store.js';
-import { LABS, labById } from '../labs/index.js';
+import { UNITS as LABS, labById } from '../labs/index.js';
 import { pageHead } from './common.js';
 
 const deckFor = (labs) => labs.flatMap((l) => [

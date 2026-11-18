@@ -1,6 +1,6 @@
 import { h, R, M, icon } from '../lib/dom.js';
 import { store } from '../lib/store.js';
-import { LABS, labById } from '../labs/index.js';
+import { LABS, MODULES, isModule, labById } from '../labs/index.js';
 import { VISUALS } from '../visuals/index.js';
 import { optionList, feedback, toast } from './common.js';
 
@@ -45,8 +45,9 @@ export function labView(id, ctx) {
   const lab = labById(id);
   if (!lab) return h('p', null, 'Lab not found.');
   store.setLast(lab.id);
-  const idx = LABS.indexOf(lab);
-  const prev = LABS[idx - 1], next = LABS[idx + 1];
+  const group = isModule(lab) ? MODULES : LABS;
+  const idx = group.indexOf(lab);
+  const prev = group[idx - 1], next = group[idx + 1];
   let n = 0;
   const heads = [];
   const body = lab.lesson.map((b) => {
@@ -68,7 +69,7 @@ export function labView(id, ctx) {
   paint();
 
   return h('div', null,
-    h('header', { class: 'page-head' }, h('div', { class: 'row' }, h('span', { class: 'code-tag' }, lab.code), h('span', { class: 'eyebrow' }, 'Lesson')),
+    h('header', { class: 'page-head' }, h('div', { class: 'row' }, h('span', { class: 'code-tag' }, lab.code), h('span', { class: 'eyebrow' }, isModule(lab) ? 'Module lesson' : 'Lab lesson')),
       h('h1', { class: 'page-title' }, lab.title), h('p', { class: 'lead' }, lab.tagline),
       h('div', { class: 'row no-print' },
         h('a', { class: 'btn small', href: `#/flashcards/${lab.id}` }, icon('cards', 16), 'Flashcards'),

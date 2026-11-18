@@ -1,6 +1,6 @@
 import { h, R, M, icon } from '../lib/dom.js';
 import { store, theme, setTheme } from '../lib/store.js';
-import { LABS } from '../labs/index.js';
+import { UNITS as LABS } from '../labs/index.js';
 import { pageHead, toast } from './common.js';
 
 export function formulasView() {

@@ -1,15 +1,15 @@
 import { h, icon } from '../lib/dom.js';
 import { store } from '../lib/store.js';
-import { LABS, labById } from '../labs/index.js';
+import { LABS, MODULES, UNITS, labById } from '../labs/index.js';
 
 export function homeView() {
   const s = store.get();
-  const prog = LABS.map((l) => store.labProgress(l.id));
-  const avg = Math.round(prog.reduce((a, b) => a + b, 0) / LABS.length);
-  const last = labById(s.lastLab) || LABS[0];
+  const prog = UNITS.map((l) => store.labProgress(l.id));
+  const avg = Math.round(prog.reduce((a, b) => a + b, 0) / UNITS.length);
+  const last = labById(s.lastLab) || MODULES[0];
   const lp = store.labProgress(last.id);
   const answered = Object.values(s.qstats).reduce((a, q) => a + q.seen, 0);
-  const weak = LABS.map((l) => ({ l, acc: store.labAccuracy(l.id, l.quiz.map((_, i) => `${l.id}-${i}`)) })).filter((x) => x.acc != null).sort((a, b) => a.acc - b.acc).slice(0, 3);
+  const weak = UNITS.map((l) => ({ l, acc: store.labAccuracy(l.id, l.quiz.map((_, i) => `${l.id}-${i}`)) })).filter((x) => x.acc != null).sort((a, b) => a.acc - b.acc).slice(0, 3);
   const mode = (href, ic, t, d) => h('a', { class: 'mode', href }, h('div', { class: 'ic' }, icon(ic, 22)), h('h3', null, t), h('p', null, d));
   return h('div', { class: 'stack', style: { gap: '24px' } },
     h('div', { class: 'home-top' },
@@ -26,8 +26,10 @@ export function homeView() {
             : h('p', { class: 'muted' }, 'Take a quiz and your weakest labs will show up here.')))),
     h('section', null, h('h2', { style: { marginBottom: '12px' } }, 'Study modes'),
       h('div', { class: 'modes' }, mode('#/flashcards', 'cards', 'Flashcards', 'Terms and formulas'), mode('#/quiz', 'quiz', 'Quiz', 'Test terminology'), mode('#/practice', 'solve', 'Practice', 'Fresh numbers every time'), mode('#/tools', 'tools', 'Lab tools', 'Calculators'))),
-    h('section', null, h('h2', { style: { marginBottom: '12px' } }, 'All labs'),
-      h('div', { class: 'labgrid' }, LABS.map((l) => h('a', { class: 'labcard', href: `#/labs/${l.id}` },
+    ...[['Modules', MODULES, 'Theory from your lecture modules: concepts, formulas and worked examples.'], ['Labs', LABS, 'Your ten laboratory activities, explained step by step.']].map(([title, list, sub]) =>
+    h('section', null, h('h2', { style: { marginBottom: '4px' } }, title), h('p', { class: 'muted', style: { marginBottom: '12px' } }, sub),
+      h('div', { class: 'labgrid' }, list.map((l) => h('a', { class: 'labcard', href: `#/labs/${l.id}` },
         h('div', { class: 'top' }, h('span', { class: 'code-tag' }, l.code), h('span', { class: 'muted', style: { fontSize: '13px' } }, store.labProgress(l.id) + '%')),
-        h('h3', null, l.title), h('div', { class: 'f' }, l.formula), h('div', { class: 'bar' }, h('i', { style: { width: store.labProgress(l.id) + '%' } })))))));
+        h('h3', null, l.title), h('div', { class: 'f' }, l.formula), h('div', { class: 'bar' }, h('i', { style: { width: store.labProgress(l.id) + '%' } })))))))
+  );
 }

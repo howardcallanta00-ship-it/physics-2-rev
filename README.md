@@ -1,6 +1,6 @@
-# Physics 2 Lab Reviewer
+# Physics 2 Reviewer
 
-A mobile- and desktop-friendly web reviewer for ten Physics 2 labs (A1–A10): full lessons with animated diagrams and typeset formulas, flashcards, quizzes, randomised practice problems, lab calculators, a formula sheet and a glossary. Progress is saved in the browser (localStorage). No backend.
+A mobile- and desktop-friendly web reviewer for Physics 2: ten lecture modules (M1–M10: fluids, thermal physics, electrostatics, capacitors, circuits, magnetism, induction, optics) and ten labs (A1–A10), each with a full lesson, animated diagrams, typeset formulas, flashcards, quizzes and randomised practice problems, plus lab calculators, a formula sheet and a glossary. Progress is saved in the browser (localStorage). No backend.
 
 ## Run locally
 ```bash
@@ -16,4 +16,4 @@ npm run build    # outputs dist/
 4. (Or use **New → Blueprint** and Render reads `render.yaml`.)
 
 ## Add or edit content
-Each lab is one file in `src/labs/` (lesson blocks, terms, formulas, quiz, problem generators). Quizzes, flashcards, glossary and formula sheet are generated from those files automatically.
+Each module is one file in `src/modules/` and each lab one file in `src/labs/` (lesson blocks, terms, formulas, quiz, problem generators). Quizzes, flashcards, glossary and formula sheet are generated from those files automatically.

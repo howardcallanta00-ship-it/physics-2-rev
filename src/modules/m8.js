@@ -1,0 +1,78 @@
+import { rint, rf, pick, T } from '../labs/util.js';
+
+const MU = 4 * Math.PI * 1e-7, QE = 1.602e-19, ME = 9.109e-31;
+
+export default {
+  id: 'm8', kind: 'module', code: 'M8', title: 'Magnetic Field', tagline: 'Magnets, moving charges, wires and solenoids',
+  formula: 'F = qvB sinθ · F = BIL sinθ · B = μ₀I/2πr · B = μ₀NI/l',
+  objectives: ['Describe magnets, poles and magnetic field lines.', 'Find the magnetic force on a moving charge and on a current-carrying wire.', 'Explain the torque on a current loop and how motors and meters work.', 'Find the field of a straight wire and a solenoid, and the force between parallel wires.'],
+  lesson: [
+    { t: 'h', x: 'Magnets and fields' },
+    { t: 'p', x: 'Every magnet has two **poles**: north and south. **Like poles repel, unlike poles attract.** If you cut a magnet in two, you do not get a separate north and south: you get two smaller magnets, each with both poles. (Isolated poles have never been found.) The name comes from Magnesia, where the Greeks found *magnetite* rock that attracted iron.' },
+    { t: 'p', x: 'A magnet fills the space around it with a **magnetic field** $\\vec B$. Field lines come out of the north pole and go into the south pole. A compass needle lines up with the field, with its north end pointing the way $\\vec B$ points. The Earth itself is a giant magnet, but its magnetic poles are **not** at the geographic poles.' },
+    { t: 'ul', x: ['The field direction is **tangent** to the line at any point.', 'Lines **closer together** mean a **stronger** field.', 'Lines form **closed loops** (unlike electric field lines, which start and end on charges).'] },
+    { t: 'note', title: 'Unit', x: 'Magnetic field is measured in **tesla (T)**: $1\\ \\text{T} = 1\\ \\text{N/(A·m)} = 1\\ \\text{Wb/m}^2 = 10^4$ gauss.' },
+    { t: 'h', x: 'Currents make magnetic fields' },
+    { t: 'p', x: 'In 1820 Hans Christian Oersted noticed a compass needle deflect when placed near a wire carrying current. **Electric currents produce magnetic fields.** The direction comes from the **right-hand rule**:' },
+    { t: 'key', title: 'Right-hand grip rule', x: 'Point your **thumb** along the **current**. Your **curled fingers** show the way the magnetic field circles the wire.' },
+    { t: 'h', x: 'Force on a moving charge' },
+    { t: 'p', x: 'A charge at rest feels no magnetic force. A **moving** charge does, and the force is always **perpendicular** to both its velocity and the field. That means the force can **change direction** but cannot change **speed**.' },
+    { t: 'eq', name: 'Magnetic force on a moving charge', tex: 'F = |q|\\,v\\,B\\,\\sin\\theta', words: 'The force is biggest when the charge moves **at right angles** to the field ($\\theta = 90^\\circ$) and zero when it moves **along** the field ($\\theta = 0$). For a **positive** charge use the right-hand rule: fingers along $\\vec v$, curl toward $\\vec B$, thumb gives $\\vec F$. For a **negative** charge, the force is reversed.', vars: [['q', 'charge', 'C'], ['v', 'speed', 'm/s'], ['B', 'magnetic field', 'T'], ['\\theta', 'angle between v and B', '°']] },
+    { t: 'worked', title: 'Example: an electron in a TV tube', steps: [{ x: 'An electron moves at $8.0\\times10^6$ m/s through a 0.025 T field at 60° to its velocity:' }, { m: 'F = (1.602\\times10^{-19})(8.0\\times10^{6})(0.025)\\sin60^\\circ = 2.8\\times10^{-14}\\ \\text{N}' }] },
+    { t: 'p', x: 'If the velocity is **perpendicular** to $\\vec B$, the force is constant in size and always sideways, so the particle moves in a **circle**. Equating $qvB = mv^2/r$:' },
+    { t: 'viz', id: 'magforce' },
+    { t: 'eq', name: 'Circular motion in a magnetic field', tex: 'r = \\frac{mv}{|q|B} \\qquad T = \\frac{2\\pi m}{|q|B}', words: 'Faster or heavier particles make **bigger circles**. A stronger field makes **tighter circles**. The period does **not** depend on speed.', vars: [] },
+    { t: 'h', x: 'Force on a current-carrying wire' },
+    { t: 'p', x: 'A current is many moving charges, so a wire in a magnetic field feels a force too.' },
+    { t: 'eq', name: 'Force on a wire', tex: 'F = B\\,I\\,L\\,\\sin\\theta', words: 'The force is **proportional to the field, the current and the length** of wire inside the field. It is largest at $\\theta = 90^\\circ$ and zero when the wire is parallel to the field. Direction by the same right-hand rule, with fingers along the **current**.', vars: [['I', 'current', 'A'], ['L', 'length of wire in the field', 'm'], ['\\theta', 'angle between the wire and B', '°']] },
+    { t: 'worked', title: 'Example', steps: [{ x: 'A 1.0 m horizontal rod carries 5.0 A west to east. The field is 1.20 T, 45° north of east:' }, { m: 'F = BIL\\sin\\theta = (1.20)(5.0)(1.0)\\sin45^\\circ = 4.24\\ \\text{N}' }] },
+    { t: 'h', x: 'Torque on a current loop' },
+    { t: 'p', x: 'On a rectangular loop in a uniform field, the forces on opposite sides are equal and opposite, so there is no net force. But they act on different lines, so the loop **twists**. That is a **torque**.' },
+    { t: 'eq', name: 'Torque on a coil', tex: '\\tau = N\\,I\\,A\\,B\\,\\sin\\phi', words: 'For $N$ turns of area $A$ carrying current $I$: the torque is **largest** when the coil’s plane is parallel to the field and **zero** when it is perpendicular. ($\\phi$ is the angle between the field and the coil’s normal.)', vars: [['N', 'number of turns', ''], ['A', 'area of one turn', 'm²']] },
+    { t: 'worked', title: 'Example', steps: [{ x: 'A circular coil of diameter 20.0 cm has 10 loops with 3.00 A in a 2.00 T field. Area $A = \\pi(0.100)^2 = 0.0314$ m².' }, { m: '\\tau_{max} = NIAB = (10)(3.00)(0.0314)(2.00) = 1.88\\ \\text{N·m},\\qquad \\tau_{min} = 0' }] },
+    { t: 'ul', x: ['**Galvanometer:** a coil on a spring in a magnet. Current twists the coil, and the needle shows how much. It is the heart of analog ammeters and voltmeters.', '**DC motor:** like a galvanometer without the spring, plus a commutator that reverses the current every half turn so the coil keeps spinning.', '**Loudspeaker:** a coil attached to the speaker cone sits in a magnet. The changing audio current makes the coil, and the cone, move.'] },
+    { t: 'h', x: 'Field of a long straight wire' },
+    { t: 'eq', name: 'Field of a straight wire', tex: 'B = \\frac{\\mu_0 I}{2\\pi r} \\qquad \\mu_0 = 4\\pi\\times10^{-7}\\ \\text{T·m/A}', words: 'The field circles the wire and **falls off as 1/r**: double the distance, half the field.', vars: [['\\mu_0', 'permeability of free space', 'T·m/A'], ['r', 'distance from the wire', 'm']] },
+    { t: 'worked', title: 'Example', steps: [{ x: 'A wall wire carries 25 A. Field 10 cm away:', m: 'B = \\frac{(4\\pi\\times10^{-7})(25)}{2\\pi(0.10)} = 5.0\\times10^{-5}\\ \\text{T}' }, { x: 'That is about the strength of Earth’s own field.' }] },
+    { t: 'h', x: 'Force between parallel wires' },
+    { t: 'p', x: 'Wire 1 makes a field at wire 2, and that field pushes on the current in wire 2. By symmetry the forces are equal and opposite.' },
+    { t: 'eq', name: 'Parallel wires', tex: '\\frac{F}{L} = \\frac{\\mu_0 I_1 I_2}{2\\pi d}', words: '**Currents in the same direction attract.** **Currents in opposite directions repel.**', vars: [['d', 'distance between the wires', 'm']] },
+    { t: 'worked', title: 'Example', steps: [{ x: 'The two wires of a 2.0 m appliance cord are 3.0 mm apart, each carrying 8.0 A in opposite directions (so they repel):' }, { m: 'F = \\frac{\\mu_0 I^2 L}{2\\pi d} = \\frac{(2\\times10^{-7})(8.0)^2(2.0)}{3.0\\times10^{-3}} = 8.5\\times10^{-3}\\ \\text{N}' }] },
+    { t: 'h', x: 'Solenoids and electromagnets' },
+    { t: 'p', x: 'A **solenoid** is a long coil with many turns. Inside it, the field is nearly uniform. It behaves like a bar magnet with a north and south end.' },
+    { t: 'eq', name: 'Field in a solenoid', tex: 'B = \\mu_0\\,\\frac{N}{l}\\,I = \\mu_0 n I', words: 'The field is proportional to the **current** and to the **turns per metre** $n = N/l$.', vars: [['N', 'number of turns', ''], ['l', 'length of the solenoid', 'm']] },
+    { t: 'worked', title: 'Example', steps: [{ x: 'A 12 cm solenoid with 420 turns carries 2.0 A:', m: 'B = \\frac{(4\\pi\\times10^{-7})(420)(2.0)}{0.12} = 8.8\\times10^{-3}\\ \\text{T}' }] },
+    { t: 'p', x: 'Put an **iron core** inside and the iron becomes magnetized, multiplying the field by hundreds or thousands. This is an **electromagnet**, used in doorbells, motors and cranes.' },
+    { t: 'key', title: 'Ampère’s law', x: 'Add up (field component along each tiny segment) × (segment length) around any closed path. The total equals $\\mu_0$ times the current passing through the loop. With symmetry, this gives the straight-wire and solenoid results above.' }
+  ],
+  terms: [
+    ['Magnetic pole', 'One of the two ends of a magnet, called north and south.'], ['Magnetic field (B)', 'The region around a magnet or current where magnetic forces act. Unit: tesla.'], ['Tesla (T)', 'Unit of magnetic field: 1 N/(A·m).'],
+    ['Magnetic field line', 'A curve showing the field direction; lines leave north poles and enter south poles.'], ['Oersted’s experiment', 'Showed that a current produces a magnetic field.'], ['Right-hand rule', 'A rule for the direction of a field or force.'],
+    ['Torque on a loop', 'The twisting effect of magnetic forces on a current loop.'], ['Galvanometer', 'A coil-and-magnet device that measures current by deflection.'], ['Electric motor', 'A device that converts electrical energy to rotation using magnetic forces on a coil.'],
+    ['Solenoid', 'A long coil of wire with many turns.'], ['Electromagnet', 'A solenoid with an iron core.'], ['Permeability of free space (μ₀)', '$4\\pi\\times10^{-7}$ T·m/A.'], ['Ampère’s law', 'The line integral of B around a closed loop equals $\\mu_0I_{enclosed}$.'], ['Magnetite', 'A naturally magnetic iron ore.']
+  ],
+  formulas: [
+    ['Force on a charge', 'F = |q|vB\\sin\\theta', ''], ['Radius of circle', 'r = \\dfrac{mv}{|q|B}', ''], ['Force on a wire', 'F = BIL\\sin\\theta', ''], ['Torque on a coil', '\\tau = NIAB\\sin\\phi', ''],
+    ['Straight wire', 'B = \\dfrac{\\mu_0 I}{2\\pi r}', ''], ['Parallel wires', '\\dfrac{F}{L} = \\dfrac{\\mu_0I_1I_2}{2\\pi d}', ''], ['Solenoid', 'B = \\mu_0\\dfrac{N}{l}I', ''], ['Permeability', '\\mu_0 = 4\\pi\\times10^{-7}\\ \\text{T·m/A}', '']
+  ],
+  quiz: [
+    { q: 'Like magnetic poles…', o: ['attract', 'repel', 'have no effect', 'merge'], a: 1, why: 'Like poles repel; unlike poles attract.' },
+    { q: 'If you cut a bar magnet in half, you get…', o: ['a north piece and a south piece', 'two magnets each with two poles', 'two non-magnetic pieces', 'one magnet and one iron piece'], a: 1, why: 'Magnetic monopoles have not been found.' },
+    { q: 'Oersted discovered that…', o: ['magnets attract iron', 'a current produces a magnetic field', 'a changing field makes current', 'light is a wave'], a: 1, why: 'A compass deflects near a current-carrying wire.' },
+    { q: 'The magnetic force on a charge moving parallel to the field is…', o: ['maximum', 'zero', 'half the maximum', 'infinite'], a: 1, why: '$\\sin0^\\circ = 0$.' },
+    { q: 'The magnetic force on a moving charge changes its…', o: ['speed', 'kinetic energy', 'direction', 'mass'], a: 2, why: 'The force is perpendicular to velocity, so it does no work.' },
+    { q: 'A charged particle in a uniform magnetic field, moving perpendicular to it, follows…', o: ['a straight line', 'a circle', 'a parabola', 'a spiral outward'], a: 1, why: 'A constant sideways force gives circular motion.' },
+    { q: 'Doubling the speed of a particle in a magnetic field makes the radius…', o: ['half', 'the same', 'double', 'four times'], a: 2, why: '$r = mv/(qB)$.' },
+    { q: 'The field of a long straight wire is proportional to…', o: ['I × r', 'I / r', 'I / r²', 'r / I'], a: 1, why: '$B = \\mu_0I/(2\\pi r)$.' },
+    { q: 'Two parallel wires with currents in the same direction…', o: ['repel', 'attract', 'exert no force', 'rotate'], a: 1, why: 'Parallel currents attract.' },
+    { q: 'The field inside a long solenoid depends on…', o: ['only the radius', 'current and turns per metre', 'only the length', 'only the wire thickness'], a: 1, why: '$B = \\mu_0nI$.' },
+    { q: 'An iron core placed in a solenoid…', o: ['reduces the field', 'does nothing', 'greatly increases the field', 'reverses the field'], a: 2, why: 'The iron becomes magnetized and adds its own field.' }
+  ],
+  problems: [
+    { id: 'fq', title: 'Force on a moving charge', gen() { const v = rint(1, 90) * 1e5; const B = rf(0.01, 1, 2); const th = pick([30, 45, 60, 90]); const F = QE * v * B * Math.sin(th * Math.PI / 180); return { prompt: `An electron moves at ${T(v)} m/s through a ${B} T magnetic field at an angle of ${th}° to the field. What is the magnitude of the magnetic force? Give your answer in N.`, givens: [`v = ${T(v)}\\ \\text{m/s},\\ B = ${B}\\ \\text{T}`, `\\theta = ${th}^\\circ`], answer: F, unit: 'N', tol: 0.02, hint: 'F = |q|vB sinθ with q = 1.602×10⁻¹⁹ C.', steps: [{ x: 'Use $F = |q|vB\\sin\\theta$:', m: `F = (1.602\\times10^{-19})(${T(v)})(${B})\\sin${th}^\\circ = ${T(F)}\\ \\text{N}` }] }; } },
+    { id: 'fw', title: 'Force on a wire', gen() { const B = rf(0.1, 2, 2); const I = rf(1, 20, 1); const L = rf(0.2, 2, 1); const th = pick([30, 45, 60, 90]); const F = B * I * L * Math.sin(th * Math.PI / 180); return { prompt: `A ${L} m length of wire carries ${I} A in a ${B} T field at ${th}° to the field. What is the magnetic force on it? Give your answer in N.`, givens: [`B = ${B}\\ \\text{T},\\ I = ${I}\\ \\text{A}`, `L = ${L}\\ \\text{m},\\ \\theta = ${th}^\\circ`], answer: F, unit: 'N', tol: 0.02, hint: 'F = BIL sinθ.', steps: [{ x: 'Use $F = BIL\\sin\\theta$:', m: `F = (${B})(${I})(${L})\\sin${th}^\\circ = ${T(F)}\\ \\text{N}` }] }; } },
+    { id: 'rad', title: 'Radius of a circular path', gen() { const v = rint(1, 50) * 1e5; const mT = rint(1, 20); const B = mT / 1000; const r = ME * v / (QE * B); return { prompt: `An electron moves at ${T(v)} m/s perpendicular to a ${mT} mT magnetic field. What is the radius of its circular path? Give your answer in mm.`, givens: [`v = ${T(v)}\\ \\text{m/s}`, `B = ${mT}\\ \\text{mT}`, `m_e = 9.109\\times10^{-31}\\ \\text{kg}`], answer: r * 1000, unit: 'mm', tol: 0.02, hint: 'r = mv/(eB). B must be in tesla.', steps: [{ x: 'Use $r = mv/(qB)$:', m: `r = \\frac{(9.109\\times10^{-31})(${T(v)})}{(1.602\\times10^{-19})(${B})} = ${T(r)}\\ \\text{m} = ${T(r * 1000)}\\ \\text{mm}` }] }; } },
+    { id: 'bw', title: 'Field of a straight wire', gen() { const I = rint(2, 100); const r = rint(2, 50); const B = MU * I / (2 * Math.PI * r / 100); return { prompt: `What is the magnetic field ${r} cm from a long straight wire carrying ${I} A? Give your answer in µT.`, givens: [`I = ${I}\\ \\text{A}`, `r = ${r}\\ \\text{cm}`], answer: B * 1e6, unit: 'µT', tol: 0.02, hint: 'B = μ₀I/(2πr), r in metres.', steps: [{ x: 'Use $B = \\mu_0I/(2\\pi r)$:', m: `B = \\frac{(4\\pi\\times10^{-7})(${I})}{2\\pi(${r / 100})} = ${T(B)}\\ \\text{T} = ${T(B * 1e6)}\\ \\mu\\text{T}` }] }; } },
+    { id: 'sol', title: 'Field in a solenoid', gen() { const N = rint(100, 1000); const l = rf(0.05, 0.5, 2); const I = rf(0.5, 5, 1); const B = MU * N * I / l; return { prompt: `A solenoid is ${Math.round(l * 100)} cm long with ${N} turns and carries ${I} A. What is the magnetic field inside it? Give your answer in mT.`, givens: [`N = ${N},\\ l = ${l}\\ \\text{m}`, `I = ${I}\\ \\text{A}`], answer: B * 1000, unit: 'mT', tol: 0.02, hint: 'B = μ₀NI/l.', steps: [{ x: 'Use $B = \\mu_0NI/l$:', m: `B = \\frac{(4\\pi\\times10^{-7})(${N})(${I})}{${l}} = ${T(B * 1000)}\\ \\text{mT}` }] }; } }
+  ]
+};
